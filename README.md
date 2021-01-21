@@ -23,3 +23,9 @@ Fileformat, rendersize, renderengine etc. are set as usual in their respective p
 
 ### Known limitations:
 - The current render-progress is not displayed. Your operating-system may mark Blender as inresponsive. So once the rendering is started, you can't interact with Blender anymore, or see the progress. (Besides the appearing renders in the output-folder.)
+
+
+### Installation:
+1. Download the latest release.
+2. In Blender open Edit > Preferences.
+3. Click "Install", select the "batch-render-objects.py" and enable it.
