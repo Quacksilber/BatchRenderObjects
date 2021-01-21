@@ -26,6 +26,6 @@ Fileformat, rendersize, renderengine etc. are set as usual in their respective p
 
 
 ### Installation:
-1. Download the latest release.
+1. Download the [latest release.](https://github.com/Quacksilber/BatchRenderObjects/releases/)
 2. In Blender open Edit > Preferences.
 3. Click "Install", select the "batch-render-objects.py" and enable it.
