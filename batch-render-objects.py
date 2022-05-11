@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Batch Render Objects",
     "author": "Quacksilber",
-    "version": (1, 0),
+    "version": (1, 2),
     "blender": (2, 80, 0),
     "description": "Imports and renders a set of external 3D-models.",
     "category": "All",
@@ -202,9 +202,10 @@ class ImportExportBatchRenderObjects(Operator, ImportHelper):
 
     def execute(self, context):
         
-        print(self.properties.filepath)
+        # get path from filepath
+        path, file = os.path.split(self.filepath)
         
-        return read_files(context, self.directory, self.files, self.axis_up_setting, self.axis_forward_setting)
+        return read_files(context, path, self.files, self.axis_up_setting, self.axis_forward_setting)
 
 
 
