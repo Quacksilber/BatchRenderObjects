@@ -22,7 +22,7 @@ bl_info = {
     "name": "Batch Render Objects",
     "author": "Quacksilber",
     "version": (1, 2),
-    "blender": (2, 80, 0),
+    "blender": (3, 10, 0),
     "description": "Imports and renders a set of external 3D-models.",
     "category": "All",
 }
