@@ -21,10 +21,10 @@
 bl_info = {
     "name": "Batch Render Objects",
     "author": "Quacksilber",
-    "version": (1, 2),
+    "version": (1, 3),
     "blender": (3, 10, 0),
     "description": "Imports and renders a set of external 3D-models.",
-    "category": "All",
+    "category": "Render",
 }
 
 
@@ -33,20 +33,44 @@ import os
 import time
 
 
-class MyPanel(bpy.types.Panel):
+class MyPanel:
     """TestTestTest"""
-    bl_label = "Batch Render Objects"
-    bl_idname = "SCENE_PT_layout"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "output"
+
+class MainPanel(MyPanel, bpy.types.Panel):
+    bl_idname = "SCENE_PT_layout"
+    bl_label = "Batch Render Objects"
     
     def draw(self, context):
         layout = self.layout
-        scene = context.scene
         row = layout.row()
         row.scale_y = 2.0
         row.operator("object.batch_render_objects_import")
+    
+
+class MaterialOverridePanel(MyPanel, bpy.types.Panel):
+    bl_parent_id = "SCENE_PT_layout"
+    bl_label = "Override Materials"
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        layout.prop_search(scene, "selected_mat", bpy.data, "materials", text="Override Material")
+        
+        
+def override_materials_of_collection(context):
+    scene = context.scene
+    material = bpy.data.materials.get(scene.selected_mat)
+    if material is None:
+        return
+    
+    for collection in scene.collection.children:
+        if collection.name == "tmp-collection-BRO-Addon":
+            for obj in collection.all_objects:
+                print("obj: ", obj.name)
+                obj.active_material = material
 
 
 def read_files(context, directory, files, axis_up_setting, axis_forward_setting):
@@ -115,8 +139,6 @@ def read_files(context, directory, files, axis_up_setting, axis_forward_setting)
         scene = context.scene
         scene.collection.children.link(collection)
    
-        print(extension)
-   
         if extension == ".blend":
             import_blend(filepath)
         elif extension == ".obj":
@@ -127,6 +149,11 @@ def read_files(context, directory, files, axis_up_setting, axis_forward_setting)
             import_fbx(filepath)
         else:
             print("Unknown Extension!")
+   
+   
+        # if an override material is set, apply it to each object in tmp collection
+        override_materials_of_collection(context)
+   
    
         # set output name
         scene.render.filepath = "//output/"+filename
@@ -157,6 +184,7 @@ class ImportExportBatchRenderObjects(Operator, ImportHelper):
     """Imports and renders a set of external 3D-models."""
     bl_idname = "object.batch_render_objects_import"
     bl_label = "Select Files to Render"
+
 
     # ImportHelper mixin class uses this
     filename_ext = ".blend;.obj;.stl;.fbx"
@@ -216,12 +244,14 @@ def menu_func_import(self, context):
 
 def register():
     bpy.utils.register_class(ImportExportBatchRenderObjects)
-    bpy.utils.register_class(MyPanel)
+    bpy.utils.register_class(MainPanel)
+    bpy.utils.register_class(MaterialOverridePanel)
+    bpy.types.Scene.selected_mat = StringProperty(default="None") 
 
 def unregister():
-    bpy.utils.register_class(ImportExportBatchRenderObjects)
-    bpy.utils.unregister_class(MyPanel)
+    bpy.utils.unregister_class(ImportExportBatchRenderObjects)
+    bpy.utils.unregister_class(MainPanel)
+    bpy.utils.unregister_class(MaterialOverridePanel)
 
 if __name__ == "__main__":
     register()
-
