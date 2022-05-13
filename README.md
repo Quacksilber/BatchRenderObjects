@@ -13,6 +13,9 @@ Fileformat, rendersize, renderengine etc. are set as usual in their respective p
 
 (Note that by default, Blender overwrites images, that have the same name. If you keep this setting, the addon would replace a "suzanne.obj" render with a "suzanne.fbx" render!)
 
+#### Override Materials
+There is the possibility to predefine a material, that will override any materials in the imported objects. If this option is untouched or empty, the standard materials per object will be used.
+
 
 ### Currently supported file-formats:
 - .obj
