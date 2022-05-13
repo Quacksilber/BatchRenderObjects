@@ -33,23 +33,31 @@ import os
 import time
 
 
-class MyPanel(bpy.types.Panel):
+class MyPanel:
     """TestTestTest"""
-    bl_label = "Batch Render Objects"
-    bl_idname = "SCENE_PT_layout"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "output"
+
+class MainPanel(MyPanel, bpy.types.Panel):
+    bl_idname = "SCENE_PT_layout"
+    bl_label = "Batch Render Objects"
     
     def draw(self, context):
         layout = self.layout
-        scene = context.scene
-        
-        layout.prop_search(scene, "selected_mat", bpy.data, "materials", text="Override Material")
-
         row = layout.row()
         row.scale_y = 2.0
         row.operator("object.batch_render_objects_import")
+    
+
+class MaterialOverridePanel(MyPanel, bpy.types.Panel):
+    bl_parent_id = "SCENE_PT_layout"
+    bl_label = "Override Materials"
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        layout.prop_search(scene, "selected_mat", bpy.data, "materials", text="Override Material")
         
         
 def override_materials_of_collection(context):
@@ -236,12 +244,14 @@ def menu_func_import(self, context):
 
 def register():
     bpy.utils.register_class(ImportExportBatchRenderObjects)
-    bpy.utils.register_class(MyPanel)
+    bpy.utils.register_class(MainPanel)
+    bpy.utils.register_class(MaterialOverridePanel)
     bpy.types.Scene.selected_mat = StringProperty(default="None") 
 
 def unregister():
     bpy.utils.unregister_class(ImportExportBatchRenderObjects)
-    bpy.utils.unregister_class(MyPanel)
+    bpy.utils.unregister_class(MainPanel)
+    bpy.utils.unregister_class(MaterialOverridePanel)
 
 if __name__ == "__main__":
     register()
